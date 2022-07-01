@@ -1,0 +1,69 @@
+<nav>
+    <mat-icon aria-hidden="false" aria-label="home icon" [inline]="false" id="logo">local_library</mat-icon>
+    <ul class="menu-bar">
+      <li class="search">
+        <form (ngSubmit)="search()">
+          <mat-form-field appearance="fill" id="search" color="primary">
+            <mat-label i18n>Search Google Books</mat-label>
+            <input type="text" placeholder="Enter here" i18n-placeholder aria-label="search" i18n-aria-label matInput
+              [formControl]="searchFormControl">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </form>
+      </li>
+    </ul>
+  </nav>
+  <main>
+    <section *ngIf="volumeList.length == 0" id="no-search">
+      <h1 i18n>Please type name of the book to the search box top right.</h1>
+    </section>
+    <mat-sidenav-container [hidden]="volumeList.length == 0">
+      <mat-sidenav mode="side" [disableClose]="true" opened *ngIf="volumeList.length == 0">
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>Filters</mat-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <ul>
+                <li>No filters yet.</li>
+              </ul>
+            </ng-template>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-sidenav>
+      <mat-sidenav mode="side" position="end" [disableClose]="true" opened *ngIf="volumeList.length == 0" id="ads">
+        <img src="http://placekitten.com/g/300/300">
+        <p i18n>Ads here.</p>
+      </mat-sidenav>
+      <mat-sidenav-content>
+        <h1 id="results-title" i18n>Results for '{{searchText}}'</h1>
+        <mat-toolbar id="results-toolbar">
+          <mat-form-field appearance="outline">
+            <mat-label>Order By</mat-label>
+            <mat-select [(ngModel)]="resultOrder" (ngModelChange)="onSortOrderChange()">
+              <mat-option [value]="OrderBy.Newest" i18n>Newest</mat-option>
+              <mat-option [value]="OrderBy.Relevance" i18n>Relevance</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-toolbar>
+        <mat-card *ngFor="let item of volumeList; let i=index" [@expandCollapse] class="mb-4">
+          <mat-card-header>
+            <mat-card-title>{{item.Title}}</mat-card-title>
+            <mat-card-subtitle>{{item.Authors}}</mat-card-subtitle>
+            <mat-card-subtitle>{{item.PublishedDate | date : 'YYYY' }}</mat-card-subtitle>
+            <img mat-card-avatar [src]="item.Thumbnail">
+          </mat-card-header>
+          <mat-card-content>
+            <div [innerHTML]="item.SearchInfo"></div>
+          </mat-card-content>
+        </mat-card>
+        <mat-paginator [pageSize]="20" [pageSizeOptions]="[10,20,40]" [length]="volumeList.length" (page)="getList()"
+          #paginator></mat-paginator>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </main>
+  <footer>
+    <span i18n>
+      <a href="https://ismail-sarikaya.com" target="_blank">İsmail Sarıkaya 2022</a>
+    </span>
+  </footer>
+  
